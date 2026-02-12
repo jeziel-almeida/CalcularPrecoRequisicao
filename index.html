@@ -135,22 +135,19 @@ function aplicarMascara(valor) {
     // Remove tudo que não for número
     valor = valor.replace(/\D/g, '');
 
-    // Se vazio
-    if (valor === '') return '';
+    if (valor.length === 0) return '';
 
-    // Garante pelo menos 3 dígitos
-    while (valor.length < 3) {
-        valor = '0' + valor;
-    }
+    // Converte para número
+    let numero = parseInt(valor, 10);
 
-    // Divide inteiro e decimal
-    const parteInteira = valor.slice(0, -2);
-    const parteDecimal = valor.slice(-2);
+    // Divide por 100 para ter 2 casas decimais
+    numero = numero / 100;
 
-    // Adiciona ponto de milhar
-    const inteiroFormatado = parteInteira.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-    return inteiroFormatado + ',' + parteDecimal;
+    // Formata corretamente em pt-BR
+    return numero.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }
 
 function parseValor(valor) {
