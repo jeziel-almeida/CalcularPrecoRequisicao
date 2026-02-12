@@ -130,11 +130,33 @@ const precoInput = document.getElementById('preco');
 const porcentagemInput = document.getElementById('porcentagem');
 const resultadoDiv = document.getElementById('resultado');
 
+// Máscara automática tipo maquininha
+function aplicarMascara(valor) {
+    // Remove tudo que não for número
+    valor = valor.replace(/\D/g, '');
+
+    // Se vazio
+    if (valor === '') return '';
+
+    // Garante pelo menos 3 dígitos
+    while (valor.length < 3) {
+        valor = '0' + valor;
+    }
+
+    // Divide inteiro e decimal
+    const parteInteira = valor.slice(0, -2);
+    const parteDecimal = valor.slice(-2);
+
+    // Adiciona ponto de milhar
+    const inteiroFormatado = parteInteira.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return inteiroFormatado + ',' + parteDecimal;
+}
+
 function parseValor(valor) {
     return parseFloat(
         valor.replace(/\./g, '')
              .replace(',', '.')
-             .replace(/[^\d.]/g, '')
     ) || 0;
 }
 
@@ -157,11 +179,20 @@ function calcular() {
     resultadoDiv.textContent = formatarNumero(resultado);
 }
 
-precoInput.addEventListener('input', calcular);
+// Evento da máscara
+precoInput.addEventListener('input', (e) => {
+    e.target.value = aplicarMascara(e.target.value);
+    calcular();
+});
+
 porcentagemInput.addEventListener('input', calcular);
 
+// Copiar somente número limpo
 resultadoDiv.addEventListener('click', () => {
-    const valorLimpo = resultadoDiv.textContent.replace(/\./g, '').replace(',', '.');
+    const valorLimpo = resultadoDiv.textContent
+        .replace(/\./g, '')
+        .replace(',', '.');
+
     navigator.clipboard.writeText(valorLimpo);
 
     resultadoDiv.classList.add('copiado');
