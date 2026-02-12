@@ -186,9 +186,8 @@ porcentagemInput.addEventListener('input', calcular);
 
 // Copiar somente número limpo
 resultadoDiv.addEventListener('click', () => {
-    const valorLimpo = resultadoDiv.textContent
-        .replace(/\./g, '')
-        .replace(',', '.');
+    // Remove apenas os pontos de milhar
+    const valorLimpo = resultadoDiv.textContent.replace(/\./g, '');
 
     navigator.clipboard.writeText(valorLimpo);
 
