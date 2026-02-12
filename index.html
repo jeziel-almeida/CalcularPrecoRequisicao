@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Ajuste</title>
+<title>Preço requisição</title>
 
 <style>
 :root {
-    --bg: #0f0f0f;
-    --card: #151515;
-    --border: #262626;
-    --text: #ffffff;
-    --muted: #8a8a8a;
+    --bg: #ffffff;
+    --card: #f7f7f7;
+    --border: #e5e5e5;
+    --text: #111111;
+    --muted: #6b6b6b;
 }
 
 * {
@@ -40,11 +40,10 @@ body {
 }
 
 h1 {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 600;
     margin-bottom: 30px;
     text-align: center;
-    letter-spacing: 0.5px;
 }
 
 .input-group {
@@ -63,7 +62,7 @@ input {
     padding: 12px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: #0c0c0c;
+    background: #fff;
     color: var(--text);
     font-size: 15px;
     outline: none;
@@ -71,7 +70,7 @@ input {
 }
 
 input:focus {
-    border-color: #fff;
+    border-color: #111;
 }
 
 .resultado {
@@ -79,7 +78,7 @@ input:focus {
     padding: 18px;
     border-radius: 12px;
     border: 1px solid var(--border);
-    background: #0c0c0c;
+    background: #fff;
     text-align: center;
     font-size: 22px;
     font-weight: 500;
@@ -88,7 +87,7 @@ input:focus {
 }
 
 .resultado:hover {
-    border-color: #fff;
+    border-color: #111;
 }
 
 .resultado.copiado {
@@ -107,20 +106,20 @@ input:focus {
 <body>
 
 <div class="container">
-    <h1>Calculadora</h1>
+    <h1>Preço requisição</h1>
 
     <div class="input-group">
         <label>Preço</label>
-        <input type="text" id="preco" placeholder="R$ 0,00">
+        <input type="text" id="preco" placeholder="Digite o valor">
     </div>
 
     <div class="input-group">
         <label>Porcentagem (%)</label>
-        <input type="text" id="porcentagem" placeholder="0%">
+        <input type="number" id="porcentagem" placeholder="Ex: 10" step="0.01">
     </div>
 
     <div class="resultado" id="resultado">
-        R$ 0,00
+        0,00
     </div>
 
     <div class="hint">Clique no resultado para copiar</div>
@@ -131,14 +130,7 @@ const precoInput = document.getElementById('preco');
 const porcentagemInput = document.getElementById('porcentagem');
 const resultadoDiv = document.getElementById('resultado');
 
-function formatarMoeda(valor) {
-    return valor.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-    });
-}
-
-function parseMoeda(valor) {
+function parseValor(valor) {
     return parseFloat(
         valor.replace(/\./g, '')
              .replace(',', '.')
@@ -146,40 +138,31 @@ function parseMoeda(valor) {
     ) || 0;
 }
 
-function parsePorcentagem(valor) {
-    return parseFloat(
-        valor.replace('%', '')
-             .replace(',', '.')
-    ) || 0;
+function formatarNumero(valor) {
+    return valor.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }
 
 function calcular() {
-    const preco = parseMoeda(precoInput.value);
-    const porcentagem = parsePorcentagem(porcentagemInput.value);
+    const preco = parseValor(precoInput.value);
+    const porcentagem = parseFloat(porcentagemInput.value) || 0;
 
     const desconto = preco * (porcentagem / 100);
     let resultado = (preco - desconto) / 0.935;
 
     resultado = Math.ceil(resultado * 100) / 100;
 
-    resultadoDiv.textContent = formatarMoeda(resultado);
+    resultadoDiv.textContent = formatarNumero(resultado);
 }
 
-precoInput.addEventListener('input', (e) => {
-    let valor = parseMoeda(e.target.value);
-    e.target.value = formatarMoeda(valor);
-    calcular();
-});
-
-porcentagemInput.addEventListener('input', (e) => {
-    let valor = parsePorcentagem(e.target.value);
-    e.target.value = valor ? valor + '%' : '';
-    calcular();
-});
+precoInput.addEventListener('input', calcular);
+porcentagemInput.addEventListener('input', calcular);
 
 resultadoDiv.addEventListener('click', () => {
-    const texto = resultadoDiv.textContent;
-    navigator.clipboard.writeText(texto);
+    const valorLimpo = resultadoDiv.textContent.replace(/\./g, '').replace(',', '.');
+    navigator.clipboard.writeText(valorLimpo);
 
     resultadoDiv.classList.add('copiado');
     setTimeout(() => {
