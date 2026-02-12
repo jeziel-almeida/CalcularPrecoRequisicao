@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Ajuste</title>
+
+<style>
+:root {
+    --bg: #0f0f0f;
+    --card: #151515;
+    --border: #262626;
+    --text: #ffffff;
+    --muted: #8a8a8a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    background: var(--card);
+    padding: 40px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 380px;
+    border: 1px solid var(--border);
+}
+
+h1 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.input-group {
+    margin-bottom: 22px;
+}
+
+label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #0c0c0c;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+input:focus {
+    border-color: #fff;
+}
+
+.resultado {
+    margin-top: 30px;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #0c0c0c;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.resultado:hover {
+    border-color: #fff;
+}
+
+.resultado.copiado {
+    border-color: #4caf50;
+}
+
+.hint {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+    color: var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Calculadora</h1>
+
+    <div class="input-group">
+        <label>Preço</label>
+        <input type="text" id="preco" placeholder="R$ 0,00">
+    </div>
+
+    <div class="input-group">
+        <label>Porcentagem (%)</label>
+        <input type="text" id="porcentagem" placeholder="0%">
+    </div>
+
+    <div class="resultado" id="resultado">
+        R$ 0,00
+    </div>
+
+    <div class="hint">Clique no resultado para copiar</div>
+</div>
+
+<script>
+const precoInput = document.getElementById('preco');
+const porcentagemInput = document.getElementById('porcentagem');
+const resultadoDiv = document.getElementById('resultado');
+
+function formatarMoeda(valor) {
+    return valor.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function parseMoeda(valor) {
+    return parseFloat(
+        valor.replace(/\./g, '')
+             .replace(',', '.')
+             .replace(/[^\d.]/g, '')
+    ) || 0;
+}
+
+function parsePorcentagem(valor) {
+    return parseFloat(
+        valor.replace('%', '')
+             .replace(',', '.')
+    ) || 0;
+}
+
+function calcular() {
+    const preco = parseMoeda(precoInput.value);
+    const porcentagem = parsePorcentagem(porcentagemInput.value);
+
+    const desconto = preco * (porcentagem / 100);
+    let resultado = (preco - desconto) / 0.935;
+
+    resultado = Math.ceil(resultado * 100) / 100;
+
+    resultadoDiv.textContent = formatarMoeda(resultado);
+}
+
+precoInput.addEventListener('input', (e) => {
+    let valor = parseMoeda(e.target.value);
+    e.target.value = formatarMoeda(valor);
+    calcular();
+});
+
+porcentagemInput.addEventListener('input', (e) => {
+    let valor = parsePorcentagem(e.target.value);
+    e.target.value = valor ? valor + '%' : '';
+    calcular();
+});
+
+resultadoDiv.addEventListener('click', () => {
+    const texto = resultadoDiv.textContent;
+    navigator.clipboard.writeText(texto);
+
+    resultadoDiv.classList.add('copiado');
+    setTimeout(() => {
+        resultadoDiv.classList.remove('copiado');
+    }, 1000);
+});
+</script>
+
+</body>
+</html>
