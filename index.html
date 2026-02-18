@@ -196,6 +196,31 @@ resultadoDiv.addEventListener('click', () => {
         resultadoDiv.classList.remove('copiado');
     }, 1000);
 });
+
+// Enter no preço → vai para porcentagem
+precoInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        porcentagemInput.focus();
+        porcentagemInput.select();
+    }
+});
+
+// Enter na porcentagem → copia resultado
+porcentagemInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+
+        const valorLimpo = resultadoDiv.textContent.replace(/\./g, '');
+
+        navigator.clipboard.writeText(valorLimpo);
+
+        resultadoDiv.classList.add('copiado');
+        setTimeout(() => {
+            resultadoDiv.classList.remove('copiado');
+        }, 1000);
+    }
+});
 </script>
 
 </body>
