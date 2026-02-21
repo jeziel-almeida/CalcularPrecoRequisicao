@@ -165,8 +165,7 @@ function mostrarToast() {
 
 // Máscara automática tipo maquininha
 function aplicarMascara(valor) {
-    // Se terminar com vírgula, guardar isso
-    const terminaComVirgula = valor.endsWith(',');
+    const digitouVirgula = valor.includes(',');
 
     // Remove tudo que não for número
     let numeros = valor.replace(/\D/g, '');
@@ -180,8 +179,9 @@ function aplicarMascara(valor) {
         maximumFractionDigits: 2
     });
 
-    // Se usuário digitou vírgula manualmente, manter visualmente
-    if (terminaComVirgula && !formatado.includes(',')) {
+    // 🔥 Se o usuário digitou vírgula manualmente,
+    // adiciona uma vírgula visual no final
+    if (digitouVirgula && !formatado.endsWith(',')) {
         formatado += ',';
     }
 
@@ -272,20 +272,6 @@ document.addEventListener('keydown', (e) => {
 
         // Foca novamente no preço
         precoInput.focus();
-    }
-});
-
-// Permitir que a vírgula apareça visualmente
-precoInput.addEventListener('keydown', (e) => {
-    if (e.key === ',') {
-        e.preventDefault();
-
-        const valorAtual = precoInput.value;
-
-        // Se já tiver vírgula, não adiciona outra
-        if (!valorAtual.includes(',')) {
-            precoInput.value = valorAtual + ',';
-        }
     }
 });
     
