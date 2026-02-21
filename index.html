@@ -100,6 +100,27 @@ input:focus {
     margin-top: 8px;
     color: var(--muted);
 }
+
+/* 🔥 Toast */
+.toast {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #111;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
 </style>
 </head>
 
@@ -125,25 +146,30 @@ input:focus {
     <div class="hint">Clique no resultado para copiar</div>
 </div>
 
+<!-- Toast -->
+<div id="toast" class="toast">Copiado com sucesso ✓</div>
+
 <script>
 const precoInput = document.getElementById('preco');
 const porcentagemInput = document.getElementById('porcentagem');
 const resultadoDiv = document.getElementById('resultado');
+const toast = document.getElementById('toast');
+
+// 🔥 Função toast
+function mostrarToast() {
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 1500);
+}
 
 // Máscara automática tipo maquininha
 function aplicarMascara(valor) {
-    // Remove tudo que não for número
     valor = valor.replace(/\D/g, '');
-
     if (valor.length === 0) return '';
 
-    // Converte para número
-    let numero = parseInt(valor, 10);
+    let numero = parseInt(valor, 10) / 100;
 
-    // Divide por 100 para ter 2 casas decimais
-    numero = numero / 100;
-
-    // Formata corretamente em pt-BR
     return numero.toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -184,18 +210,21 @@ precoInput.addEventListener('input', (e) => {
 
 porcentagemInput.addEventListener('input', calcular);
 
-// Copiar somente número limpo
-resultadoDiv.addEventListener('click', () => {
-    // Remove apenas os pontos de milhar
+// 🔥 Função copiar centralizada
+function copiarResultado() {
     const valorLimpo = resultadoDiv.textContent.replace(/\./g, '');
-
     navigator.clipboard.writeText(valorLimpo);
 
     resultadoDiv.classList.add('copiado');
+    mostrarToast();
+
     setTimeout(() => {
         resultadoDiv.classList.remove('copiado');
     }, 1000);
-});
+}
+
+// Clique copia
+resultadoDiv.addEventListener('click', copiarResultado);
 
 // Enter no preço → vai para porcentagem
 precoInput.addEventListener('keydown', (e) => {
@@ -206,19 +235,11 @@ precoInput.addEventListener('keydown', (e) => {
     }
 });
 
-// Enter na porcentagem → copia resultado
+// Enter na porcentagem → copia
 porcentagemInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
-
-        const valorLimpo = resultadoDiv.textContent.replace(/\./g, '');
-
-        navigator.clipboard.writeText(valorLimpo);
-
-        resultadoDiv.classList.add('copiado');
-        setTimeout(() => {
-            resultadoDiv.classList.remove('copiado');
-        }, 1000);
+        copiarResultado();
     }
 });
 </script>
