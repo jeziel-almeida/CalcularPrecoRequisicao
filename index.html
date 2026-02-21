@@ -165,15 +165,27 @@ function mostrarToast() {
 
 // Máscara automática tipo maquininha
 function aplicarMascara(valor) {
-    valor = valor.replace(/\D/g, '');
-    if (valor.length === 0) return '';
+    // Se terminar com vírgula, guardar isso
+    const terminaComVirgula = valor.endsWith(',');
 
-    let numero = parseInt(valor, 10) / 100;
+    // Remove tudo que não for número
+    let numeros = valor.replace(/\D/g, '');
 
-    return numero.toLocaleString('pt-BR', {
+    if (numeros.length === 0) return '';
+
+    let numero = parseInt(numeros, 10) / 100;
+
+    let formatado = numero.toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
+
+    // Se usuário digitou vírgula manualmente, manter visualmente
+    if (terminaComVirgula && !formatado.includes(',')) {
+        formatado += ',';
+    }
+
+    return formatado;
 }
 
 function parseValor(valor) {
