@@ -242,6 +242,27 @@ porcentagemInput.addEventListener('keydown', (e) => {
         copiarResultado();
     }
 });
+
+// 🔥 F2 limpa tudo
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'F2') {
+        e.preventDefault();
+
+        // Limpa inputs
+        precoInput.value = '';
+        porcentagemInput.value = '';
+
+        // Reseta resultado
+        resultadoDiv.textContent = '0,00';
+
+        // Remove borda verde se estiver ativa
+        resultadoDiv.classList.remove('copiado');
+
+        // Foca novamente no preço
+        precoInput.focus();
+    }
+});
+    
 </script>
 
 </body>
