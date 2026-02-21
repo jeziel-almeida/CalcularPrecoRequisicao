@@ -245,7 +245,7 @@ porcentagemInput.addEventListener('keydown', (e) => {
 
 // 🔥 F2 limpa tudo
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'F2') {
+    if (e.key === 'f') {
         e.preventDefault();
 
         // Limpa inputs
@@ -260,6 +260,20 @@ document.addEventListener('keydown', (e) => {
 
         // Foca novamente no preço
         precoInput.focus();
+    }
+});
+
+// Permitir que a vírgula apareça visualmente
+precoInput.addEventListener('keydown', (e) => {
+    if (e.key === ',') {
+        e.preventDefault();
+
+        const valorAtual = precoInput.value;
+
+        // Se já tiver vírgula, não adiciona outra
+        if (!valorAtual.includes(',')) {
+            precoInput.value = valorAtual + ',';
+        }
     }
 });
     
