@@ -213,6 +213,45 @@ precoPapelaria.addEventListener('input', (e) => {
 ipiInput.addEventListener('input', calcularPapelaria);
 resultadoPapelaria.addEventListener('click', () => copiar(resultadoPapelaria));
 
+// ========================
+// 🔥 FLUXO ENTER - LIVROS
+// ========================
+
+precoLivro.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        porcentagemLivro.focus();
+        porcentagemLivro.select();
+    }
+});
+
+porcentagemLivro.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        copiar(resultadoLivro);
+    }
+});
+
+
+// ========================
+// 🔥 FLUXO ENTER - PAPELARIA
+// ========================
+
+precoPapelaria.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        ipiInput.focus();
+        ipiInput.select();
+    }
+});
+
+ipiInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        copiar(resultadoPapelaria);
+    }
+});
+    
 </script>
 
 </body>
