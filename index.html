@@ -75,6 +75,11 @@ input {
     cursor: pointer;
 }
 
+.resultado.copiado {
+    border-color: #22c55e; /* verde elegante */
+    transition: border-color 0.2s ease;
+}
+
 .toast {
     position: fixed;
     bottom: 40px;
@@ -184,6 +189,15 @@ function mostrarToast() {
 function copiar(elemento) {
     const valorLimpo = elemento.textContent.replace(/\./g, '');
     navigator.clipboard.writeText(valorLimpo);
+
+    // 🔥 adiciona borda verde
+    elemento.classList.add('copiado');
+
+    // 🔥 remove após 1 segundo
+    setTimeout(() => {
+        elemento.classList.remove('copiado');
+    }, 1000);
+
     mostrarToast();
 }
 
@@ -282,6 +296,30 @@ ipiInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
         copiar(resultadoPapelaria);
+    }
+});
+
+// 🔥 Tecla "F" limpa tudo (ambos formulários)
+document.addEventListener('keydown', (e) => {
+
+    // Evita limpar enquanto estiver digitando dentro de um campo
+    if (document.activeElement.tagName === "INPUT") return;
+
+    if (e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+
+        // 📚 LIVROS
+        precoLivro.value = '';
+        porcentagemLivro.value = '';
+        resultadoLivro.textContent = '0,00';
+
+        // 📦 PAPELARIA
+        precoPapelaria.value = '';
+        ipiInput.value = '';
+        resultadoPapelaria.textContent = '0,00';
+
+        // Volta foco para primeiro campo
+        precoLivro.focus();
     }
 });
     
