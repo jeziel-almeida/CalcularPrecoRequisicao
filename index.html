@@ -14,20 +14,21 @@
     --muted: #6b6b6b;
 }
 
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 40px 20px;
+}
+
+.wrapper {
     display: flex;
+    gap: 40px;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+    flex-wrap: wrap;
 }
 
 .container {
@@ -40,15 +41,13 @@ body {
 }
 
 h1 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     margin-bottom: 30px;
     text-align: center;
 }
 
-.input-group {
-    margin-bottom: 22px;
-}
+.input-group { margin-bottom: 22px; }
 
 label {
     font-size: 13px;
@@ -62,15 +61,7 @@ input {
     padding: 12px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: #fff;
-    color: var(--text);
     font-size: 15px;
-    outline: none;
-    transition: 0.2s ease;
-}
-
-input:focus {
-    border-color: #111;
 }
 
 .resultado {
@@ -78,92 +69,60 @@ input:focus {
     padding: 18px;
     border-radius: 12px;
     border: 1px solid var(--border);
-    background: #fff;
     text-align: center;
     font-size: 22px;
     font-weight: 500;
     cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.resultado:hover {
-    border-color: #111;
-}
-
-.resultado.copiado {
-    border-color: #4caf50;
-}
-
-.hint {
-    font-size: 12px;
-    text-align: center;
-    margin-top: 8px;
-    color: var(--muted);
-}
-
-/* 🔥 Toast */
-.toast {
-    position: fixed;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: #111;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-size: 14px;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s ease;
-}
-
-.toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h1>Preço requisição</h1>
+<div class="wrapper">
 
-    <div class="input-group">
-        <label>Preço</label>
-        <input type="text" id="preco" placeholder="Digite o valor">
+    <!-- 📚 LIVROS -->
+    <div class="container">
+        <h1>Livros</h1>
+
+        <div class="input-group">
+            <label>Preço</label>
+            <input type="text" id="precoLivro">
+        </div>
+
+        <div class="input-group">
+            <label>Desconto (%)</label>
+            <input type="number" id="porcentagemLivro">
+        </div>
+
+        <div class="resultado" id="resultadoLivro">0,00</div>
     </div>
 
-    <div class="input-group">
-        <label>Porcentagem (%)</label>
-        <input type="number" id="porcentagem" placeholder="Ex: 10" step="0.01">
+    <!-- 📦 PAPELARIA -->
+    <div class="container">
+        <h1>Papelaria</h1>
+
+        <div class="input-group">
+            <label>Preço</label>
+            <input type="text" id="precoPapelaria">
+        </div>
+
+        <div class="input-group">
+            <label>IPI (%)</label>
+            <input type="number" id="ipi">
+        </div>
+
+        <div class="resultado" id="resultadoPapelaria">0,00</div>
     </div>
 
-    <div class="resultado" id="resultado">
-        0,00
-    </div>
-
-    <div class="hint">Clique no resultado para copiar</div>
 </div>
 
-<!-- Toast -->
-<div id="toast" class="toast">Copiado com sucesso ✓</div>
-
 <script>
-const precoInput = document.getElementById('preco');
-const porcentagemInput = document.getElementById('porcentagem');
-const resultadoDiv = document.getElementById('resultado');
-const toast = document.getElementById('toast');
 
-// 🔥 Função toast
-function mostrarToast() {
-    toast.classList.add('show');
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 1500);
-}
+// ========================
+// FUNÇÕES GERAIS
+// ========================
 
-// Máscara automática tipo maquininha
 function aplicarMascara(valor) {
     valor = valor.replace(/\D/g, '');
     if (valor.length === 0) return '';
@@ -190,79 +149,70 @@ function formatarNumero(valor) {
     });
 }
 
-function calcular() {
-    const preco = parseValor(precoInput.value);
-    const porcentagem = parseFloat(porcentagemInput.value) || 0;
+function copiar(elemento) {
+    const valorLimpo = elemento.textContent.replace(/\./g, '');
+    navigator.clipboard.writeText(valorLimpo);
+}
+
+// ========================
+// 📚 LIVROS
+// ========================
+
+const precoLivro = document.getElementById('precoLivro');
+const porcentagemLivro = document.getElementById('porcentagemLivro');
+const resultadoLivro = document.getElementById('resultadoLivro');
+
+function calcularLivro() {
+    const preco = parseValor(precoLivro.value);
+    const porcentagem = parseFloat(porcentagemLivro.value) || 0;
 
     const desconto = preco * (porcentagem / 100);
     let resultado = (preco - desconto) / 0.935;
 
     resultado = Math.ceil(resultado * 100) / 100;
 
-    resultadoDiv.textContent = formatarNumero(resultado);
+    resultadoLivro.textContent = formatarNumero(resultado);
 }
 
-// Evento da máscara
-precoInput.addEventListener('input', (e) => {
+precoLivro.addEventListener('input', (e) => {
     e.target.value = aplicarMascara(e.target.value);
-    calcular();
+    calcularLivro();
 });
 
-porcentagemInput.addEventListener('input', calcular);
+porcentagemLivro.addEventListener('input', calcularLivro);
+resultadoLivro.addEventListener('click', () => copiar(resultadoLivro));
 
-// 🔥 Função copiar centralizada
-function copiarResultado() {
-    const valorLimpo = resultadoDiv.textContent.replace(/\./g, '');
-    navigator.clipboard.writeText(valorLimpo);
 
-    resultadoDiv.classList.add('copiado');
-    mostrarToast();
+// ========================
+// 📦 PAPELARIA
+// ========================
 
-    setTimeout(() => {
-        resultadoDiv.classList.remove('copiado');
-    }, 1000);
+const precoPapelaria = document.getElementById('precoPapelaria');
+const ipiInput = document.getElementById('ipi');
+const resultadoPapelaria = document.getElementById('resultadoPapelaria');
+
+function calcularPapelaria() {
+    const preco = parseValor(precoPapelaria.value);
+    const ipiPercentual = parseFloat(ipiInput.value.replace(',', '.')) || 0;
+
+    // transforma 4 em 1.04 | 6.5 em 1.065
+    const ipiDecimal = 1 + (ipiPercentual / 100);
+
+    let resultado = (preco / 0.755) * ipiDecimal;
+
+    resultado = Math.ceil(resultado * 100) / 100;
+
+    resultadoPapelaria.textContent = formatarNumero(resultado);
 }
 
-// Clique copia
-resultadoDiv.addEventListener('click', copiarResultado);
-
-// Enter no preço → vai para porcentagem
-precoInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        porcentagemInput.focus();
-        porcentagemInput.select();
-    }
+precoPapelaria.addEventListener('input', (e) => {
+    e.target.value = aplicarMascara(e.target.value);
+    calcularPapelaria();
 });
 
-// Enter na porcentagem → copia
-porcentagemInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        copiarResultado();
-    }
-});
+ipiInput.addEventListener('input', calcularPapelaria);
+resultadoPapelaria.addEventListener('click', () => copiar(resultadoPapelaria));
 
-// 🔥 F2 limpa tudo
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'f') {
-        e.preventDefault();
-
-        // Limpa inputs
-        precoInput.value = '';
-        porcentagemInput.value = '';
-
-        // Reseta resultado
-        resultadoDiv.textContent = '0,00';
-
-        // Remove borda verde se estiver ativa
-        resultadoDiv.classList.remove('copiado');
-
-        // Foca novamente no preço
-        precoInput.focus();
-    }
-});
-    
 </script>
 
 </body>
