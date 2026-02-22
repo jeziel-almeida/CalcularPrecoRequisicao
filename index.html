@@ -302,9 +302,6 @@ ipiInput.addEventListener('keydown', (e) => {
 // 🔥 Tecla "F" limpa tudo (ambos formulários)
 document.addEventListener('keydown', (e) => {
 
-    // Evita limpar enquanto estiver digitando dentro de um campo
-    if (document.activeElement.tagName === "INPUT") return;
-
     if (e.key.toLowerCase() === 'f') {
         e.preventDefault();
 
@@ -318,7 +315,11 @@ document.addEventListener('keydown', (e) => {
         ipiInput.value = '';
         resultadoPapelaria.textContent = '0,00';
 
-        // Volta foco para primeiro campo
+        // Remove borda verde se estiver ativa
+        resultadoLivro.classList.remove('copiado');
+        resultadoPapelaria.classList.remove('copiado');
+
+        // Foco inicial
         precoLivro.focus();
     }
 });
